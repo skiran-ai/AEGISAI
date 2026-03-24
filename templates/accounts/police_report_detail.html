@@ -1,0 +1,45 @@
+{% extends 'accounts/police_base.html' %}
+{% block page_title %}Investigate Report{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Investigate Report</h1>
+    <a href="{% url 'police_reports' %}" class="btn btn-outline" style="margin-bottom: 1rem; width: auto;">&larr; Back to Reports</a>
+</div>
+<div class="content-card">
+    <h3>{{ report.title }}</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; margin-bottom: 2rem;">
+        <div><span style="color: var(--text-muted); font-size: 0.85rem;">Crime Type:</span> <p>{{ report.get_crime_type_display }}</p></div>
+        <div><span style="color: var(--text-muted); font-size: 0.85rem;">Reported On:</span> <p>{{ report.created_at }}</p></div>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+        <span style="color: var(--text-muted); font-size: 0.85rem;">Description:</span>
+        <div style="background: var(--bg-input); padding: 1rem; border-radius: 8px; margin-top: 0.5rem; border: 1px solid var(--border-color);">
+            {{ report.description|linebreaks }}
+        </div>
+    </div>
+    
+    {% if report.evidence_details %}
+    <div style="margin-bottom: 1.5rem;">
+        <span style="color: var(--text-muted); font-size: 0.85rem;">Evidence Details:</span>
+        <div style="background: var(--bg-input); padding: 1rem; border-radius: 8px; margin-top: 0.5rem; border: 1px solid var(--border-color);">
+            {{ report.evidence_details|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+        <h4>Update Status</h4>
+        <form method="POST" style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+            {% csrf_token %}
+            <select name="status" class="form-input" style="max-width: 200px;">
+                <option value="PENDING" {% if report.status == 'PENDING' %}selected{% endif %}>Pending</option>
+                <option value="REVIEWING" {% if report.status == 'REVIEWING' %}selected{% endif %}>Under Review</option>
+                <option value="RESOLVED" {% if report.status == 'RESOLVED' %}selected{% endif %}>Resolved</option>
+                <option value="DISMISSED" {% if report.status == 'DISMISSED' %}selected{% endif %}>Dismissed</option>
+            </select>
+            <button type="submit" class="btn btn-primary" style="width: auto;">Update Status</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

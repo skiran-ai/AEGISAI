@@ -1,0 +1,54 @@
+{% extends 'accounts/admin_base.html' %}
+{% block page_title %}Manage Police Officers{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Manage Police Officers</h1>
+    <p>View all registered police officers.</p>
+</div>
+<div class="content-card table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Badge Number</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Date Joined</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for officer in police_officers %}
+            <tr>
+                <td>{{ officer.get_full_name }}</td>
+                <td>{{ officer.badge_number }}</td>
+                <td>{{ officer.email }}</td>
+                <td>{{ officer.phone_number }}</td>
+                <td>
+                    {% if officer.status == 'active' %}
+                    <span style="color: var(--primary-color);">Active</span>
+                    {% else %}
+                    <span style="color: var(--danger-color, red);">Suspended</span>
+                    {% endif %}
+                </td>
+                <td>{{ officer.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    <form method="POST" action="{% url 'admin_police' %}" style="display: inline-flex; gap: 5px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="police_id" value="{{ officer.police_id }}">
+                        <button type="submit" name="action" value="dismiss" class="btn btn-outline"
+                            style="padding: 2px 8px; font-size: 0.8rem; border-color: red; color: red;"
+                            onclick="return confirm('Are you sure you want to dismiss this officer?');">Dismiss</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No police officers found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

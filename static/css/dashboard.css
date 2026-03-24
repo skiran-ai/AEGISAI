@@ -1,0 +1,350 @@
+/* ============================================================
+   AEGISAI — dashboard.css
+   Glassmorphism · Neon Glow · Hover Animations
+   ============================================================ */
+
+/* ── Welcome banner ───────────────────────────────────────── */
+.welcome-section {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.07), rgba(0, 71, 255, 0.07));
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    border-radius: 18px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-section::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.welcome-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: #f8fafc;
+}
+
+.welcome-section p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+/* ── Stats grid ───────────────────────────────────────────── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+/* ── Stat card — glassmorphism + neon glow ────────────────── */
+.stat-card {
+    background: linear-gradient(145deg, rgba(26, 35, 50, 0.75), rgba(5, 11, 20, 0.85));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 1.6rem 1.4rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    cursor: default;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.stat-card:hover {
+    transform: rotateX(5deg) rotateY(5deg) scale(1.02);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.25), 0 12px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(0, 240, 255, 0.35);
+    transition: 0.3s ease;
+}
+
+/* icon circles */
+.stat-card .stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.1rem;
+    transition: box-shadow 0.35s ease;
+}
+
+.stat-card:hover .stat-icon {
+    box-shadow: 0 0 18px currentColor;
+}
+
+.stat-icon.cyan {
+    background: rgba(0, 240, 255, 0.12);
+    color: #00f0ff;
+}
+
+.stat-icon.blue {
+    background: rgba(0, 71, 255, 0.12);
+    color: #4d80ff;
+}
+
+.stat-icon.green {
+    background: rgba(0, 255, 102, 0.12);
+    color: #00ff66;
+}
+
+.stat-icon.red {
+    background: rgba(255, 0, 60, 0.12);
+    color: #ff003c;
+}
+
+.stat-icon.yellow {
+    background: rgba(255, 184, 0, 0.12);
+    color: #ffb800;
+}
+
+.stat-icon.purple {
+    background: rgba(176, 38, 255, 0.12);
+    color: #b026ff;
+}
+
+.stat-card .stat-value {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #f8fafc;
+    line-height: 1;
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.5px;
+}
+
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+/* ── Content cards ────────────────────────────────────────── */
+.content-card {
+    background: linear-gradient(145deg, rgba(26, 35, 50, 0.7), rgba(5, 11, 20, 0.8));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 1.6rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.content-card:hover {
+    transform: rotateX(5deg) rotateY(5deg) scale(1.02);
+    border-color: rgba(0, 240, 255, 0.18);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.08), 0 8px 28px rgba(0, 0, 0, 0.45);
+    transition: 0.3s ease;
+}
+
+.content-card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ── Data table tweaks ────────────────────────────────────── */
+.data-table thead th {
+    background: rgba(0, 240, 255, 0.04);
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.data-table tbody tr {
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(0, 240, 255, 0.04);
+}
+
+.data-table tbody td {
+    padding: 0.9rem 1rem;
+    font-size: 0.875rem;
+    color: #cbd5e1;
+    vertical-align: middle;
+}
+
+/* ── Sidebar active link pulse ───────────────────────────── */
+.sidebar-nav li a.active {
+    background: rgba(0, 240, 255, 0.12);
+    color: #00f0ff;
+    box-shadow: inset 3px 0 0 #00f0ff;
+}
+
+/* ── Quick-action buttons ─────────────────────────────────── */
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    border-radius: 12px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.25s ease;
+}
+
+.quick-action-btn:hover {
+    background: rgba(0, 240, 255, 0.14);
+    border-color: rgba(0, 240, 255, 0.4);
+    color: #00f0ff;
+    transform: translateX(4px);
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.auth-card {
+    width: 420px;
+    padding: 30px;
+    animation: fadeInUp 0.6s ease;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group input,
+.form-control {
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.5px;
+    text-align: left;
+}
+
+/* ── Form Control & Consistent Styling ────────────────────── */
+.form-control {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #0f172a !important;
+    border: 1px solid #1e293b !important;
+    color: white !important;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control::placeholder, input::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.form-control:focus,
+input:focus {
+    outline: none;
+    border-color: #00c6ff !important;
+    box-shadow: 0 0 10px rgba(0, 198, 255, 0.5) !important;
+    background: rgba(13, 19, 33, 0.9) !important;
+}
+
+/* ── Primary Auth Button ──────────────────────────────────── */
+.btn-primary {
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(135deg, #00f0ff, #0047ff);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 15px rgba(0, 198, 255, 0.6);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 25px rgba(0, 198, 255, 1);
+    transform: translateY(-2px);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #64748b;
+}
+
+.auth-footer a {
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: 600;
+}

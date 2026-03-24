@@ -1,0 +1,54 @@
+{% extends 'accounts/user_base.html' %}
+
+{% block page_title %}Report #{{ report.pk }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Report Details</h1>
+    <p>
+        <a href="{% url 'user_reports' %}" style="color: var(--accent-cyan); text-decoration: none;">&#x2190; Back to Reports</a>
+    </p>
+</div>
+
+<div class="content-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h3 style="margin-bottom: 0;">{{ report.title }}</h3>
+        <span class="status-badge status-{{ report.status|lower }}">{{ report.get_status_display }}</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color);">
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">Report ID</span>
+            <span style="font-weight: 600;">#{{ report.pk }}</span>
+        </div>
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">Crime Type</span>
+            <span class="status-badge status-info">{{ report.get_crime_type_display }}</span>
+        </div>
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">Filed On</span>
+            <span style="font-weight: 600;">{{ report.created_at|date:"M d, Y - h:i A" }}</span>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+        <h4 style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Description</h4>
+        <p style="line-height: 1.7; color: var(--text-primary);">{{ report.description|linebreaksbr }}</p>
+    </div>
+
+    {% if report.evidence_details %}
+    <div style="margin-bottom: 1.5rem;">
+        <h4 style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Evidence Details</h4>
+        <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem;">
+            <p style="line-height: 1.7; color: var(--text-primary); font-family: monospace; font-size: 0.9rem;">{{ report.evidence_details|linebreaksbr }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if report.updated_at != report.created_at %}
+    <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+        Last updated: {{ report.updated_at|date:"M d, Y - h:i A" }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

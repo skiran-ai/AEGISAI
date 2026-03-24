@@ -1,0 +1,144 @@
+{% extends 'accounts/user_base.html' %}
+
+{% block page_title %}FileShare{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>FileShare</h1>
+    <p>Upload and share files securely with AI malware scanning</p>
+</div>
+
+<!-- Upload Form -->
+<div class="content-card">
+    <h3>&#x1F4E4; Send a File</h3>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="messages-container">
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Send To (Registered User)</label>
+                <select name="receiver" id="id_receiver" class="form-control" required style="pointer-events: auto;">
+                    <option value="" selected>-- Select a user --</option>
+                    {% for user in users %}
+                    <option value="{{ user.id }}">
+                        {{ user.email }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if form.receiver.errors %}
+                <ul class="form-errors">{% for e in form.receiver.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>File (png, jpg, pdf, txt — max 10 MB)</label>
+                {{ form.file }}
+                {% if form.file.errors %}
+                <ul class="form-errors">{% for e in form.file.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Message (optional)</label>
+            {{ form.message }}
+            {% if form.message.errors %}
+            <ul class="form-errors">{% for e in form.message.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.75rem 2.5rem;">
+                &#x1F6E1; Scan &amp; Send
+            </button>
+            <span style="color: var(--text-muted); font-size: 0.8rem;">Files are scanned by AI before delivery</span>
+        </div>
+    </form>
+</div>
+
+<!-- Sent Files History -->
+<div class="content-card">
+    <h3>Sent Files ({{ sent_files|length }})</h3>
+
+    {% if sent_files %}
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Sent To</th>
+                    <th>Scan Result</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in sent_files %}
+                <tr>
+                    <td>
+                        <strong>{{ f.original_filename }}</strong>
+                        {% if f.message %}
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">{{ f.message|truncatewords:10 }}</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ f.receiver.get_full_name }}<br><span style="color: var(--text-muted); font-size: 0.8rem;">{{ f.receiver.email }}</span></td>
+                    <td>
+                        {% if f.scan_result == 'CLEAN' %}
+                        <span class="status-badge status-resolved">&#x2705; Clean</span>
+                        {% elif f.scan_result == 'MALICIOUS' %}
+                        <span class="status-badge status-dismissed">&#x26D4; Malicious</span>
+                        {% else %}
+                        <span class="status-badge status-pending">&#x23F3; {{ f.get_scan_result_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">{{ f.created_at|date:"M d, Y" }}<br><span style="color: var(--text-muted); font-size: 0.8rem;">{{ f.created_at|time:"h:i A" }}</span></td>
+                    <td>
+                        {% if f.scan_result == 'CLEAN' %}
+                        <a href="{% url 'download_file' f.pk %}" class="btn-sm btn-sm-primary">Download</a>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">Blocked</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#x1F4E4;</div>
+        <p>No files sent yet. Use the form above to share files.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Scan Info Card -->
+<div class="content-card">
+    <h3>AI Malware Scanner Info</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div>
+            <h4 style="color: var(--accent-green); font-size: 0.85rem; margin-bottom: 0.5rem;">Allowed File Types</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">.png, .jpg, .pdf, .txt</p>
+        </div>
+        <div>
+            <h4 style="color: var(--accent-red); font-size: 0.85rem; margin-bottom: 0.5rem;">Blocked File Types</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">.exe, .bat, .js</p>
+        </div>
+        <div>
+            <h4 style="color: var(--accent-cyan); font-size: 0.85rem; margin-bottom: 0.5rem;">Detection Method</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Random Forest classifier analysing byte entropy, distribution patterns, and structural features</p>
+        </div>
+        <div>
+            <h4 style="color: var(--accent-yellow); font-size: 0.85rem; margin-bottom: 0.5rem;">Max File Size</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">10 MB per file</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

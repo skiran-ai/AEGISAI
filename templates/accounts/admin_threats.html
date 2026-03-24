@@ -1,0 +1,56 @@
+{% extends 'accounts/admin_base.html' %}
+{% block page_title %}Malware Threats{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Malware Threat Logs</h1>
+    <p>View all malicious payloads detected across the AEGISAI platform.</p>
+</div>
+<div class="content-card table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Threat Type</th>
+                <th>Severity</th>
+                <th>Detected By</th>
+                <th>Date Logged</th>
+                <th>Status / Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in threat_logs %}
+            <tr>
+                <td style="font-weight: 500;">{{ log.filename }}</td>
+                <td>{{ log.threat_type }}</td>
+                <td>
+                    <span
+                        class="role-badge {% if log.severity == 'HIGH' or log.severity == 'CRITICAL' %}admin-badge{% elif log.severity == 'MEDIUM' %}police-badge{% else %}user-badge{% endif %}"
+                        style="margin-bottom: 0;">{{ log.severity }}</span>
+                </td>
+                <td>{{ log.user.get_full_name }}</td>
+                <td>{{ log.detected_at|date:"M d, Y H:i" }}</td>
+                <td>
+                    {% if log.user.profile.is_suspended %}
+                        <span class="status-badge status-dismissed" style="font-size: 0.7rem;">Suspended</span>
+                        <form method="POST" action="{% url 'toggle_suspend_user' log.user.id %}" style="display:inline; margin-left:5px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.7rem; border-color: var(--accent-green); color: var(--accent-green);">Activate User</button>
+                        </form>
+                    {% else %}
+                        <span class="status-badge status-resolved" style="font-size: 0.7rem;">Active</span>
+                        <form method="POST" action="{% url 'toggle_suspend_user' log.user.id %}" style="display:inline; margin-left:5px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.7rem; border-color: var(--accent-red); color: var(--accent-red);">Suspend User</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No threats detected.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

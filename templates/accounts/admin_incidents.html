@@ -1,0 +1,59 @@
+{% extends 'accounts/admin_base.html' %}
+{% block page_title %}All Incidents{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>All Incidents</h1>
+    <p>Overview of all user reports.</p>
+</div>
+<div class="content-card table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>User</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incident in incidents %}
+            <tr>
+                <td>{{ incident.title }}</td>
+                <td>{{ incident.user.get_full_name }}</td>
+                <td>{{ incident.get_crime_type_display }}</td>
+                <td>
+                    <span class="status-badge status-{{ incident.status|lower }}">{{ incident.get_status_display }}</span>
+                </td>
+                <td style="color: var(--text-muted); font-size: 0.85rem;">
+                    <div style="margin-bottom: 5px;">
+                        {% if incident.assigned_police %}{{ incident.assigned_police.get_full_name }}{% else %}Unassigned{% endif %}
+                    </div>
+                    <form method="POST" style="display: flex; gap: 5px; align-items: center;">
+                        {% csrf_token %}
+                        <input type="hidden" name="report_id" value="{{ incident.pk }}">
+                        <select name="assigned_police" style="padding: 2px; font-size: 0.75rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); max-width: 100px;">
+                            <option value="">Select Police</option>
+                            {% for police in police_users %}
+                                <option value="{{ police.police_id }}" {% if incident.assigned_police and incident.assigned_police.police_id == police.police_id %}selected{% endif %}>
+                                    {{ police.firstname }} {{ police.lastname }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary" style="padding: 2px 6px; font-size: 0.75rem; width: auto;">Assign</button>
+                    </form>
+                </td>
+                <td>{{ incident.created_at|date:"M d, Y" }}</td>
+                <td><a href="{% url 'admin_incident_detail' incident.pk %}" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; width: auto;">View</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No incidents found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'accounts/admin_base.html' %}
+{% block page_title %}Manage Users{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Manage Users</h1>
+    <p>View all registered users.</p>
+</div>
+<div class="content-card table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Date Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.get_full_name }}</td>
+                <td>{{ u.email }}</td>
+                <td>
+                    {% if u.is_superuser %}
+                    <span class="role-badge admin-badge" style="margin-bottom: 0;">Admin</span>
+                    {% else %}
+                    <span class="role-badge user-badge" style="margin-bottom: 0;">User</span>
+                    {% endif %}
+                </td>
+                <td>{{ u.date_joined|date:"M d, Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

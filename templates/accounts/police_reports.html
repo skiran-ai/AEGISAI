@@ -1,0 +1,50 @@
+{% extends 'accounts/police_base.html' %}
+{% block page_title %}Crime Reports{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Crime Reports</h1>
+    <p>View user-submitted cybercrime reports.</p>
+</div>
+<div class="content-card table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td>{{ report.title }}</td>
+                <td>{{ report.get_crime_type_display }}</td>
+                <td>
+                    <span class="status-badge status-{{ report.status|lower }}">{{ report.get_status_display }}</span>
+                </td>
+                <td style="color: var(--text-muted); font-size: 0.85rem;">
+                    {% if report.assigned_police %}
+                        {% if report.assigned_police == user %}
+                            <span style="color: var(--accent-cyan); font-weight: 600;">Me</span>
+                        {% else %}
+                            {{ report.assigned_police.get_full_name }}
+                        {% endif %}
+                    {% else %}
+                        Unassigned
+                    {% endif %}
+                </td>
+                <td>{{ report.created_at|date:"M d, Y" }}</td>
+                <td><a href="{% url 'police_report_detail' report.pk %}" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; width: auto;">Investigate</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No reports found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

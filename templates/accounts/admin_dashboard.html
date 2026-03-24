@@ -1,0 +1,123 @@
+{% extends 'accounts/admin_base.html' %}
+
+{% block dashboard_content %}
+<div class="welcome-section" style="background: linear-gradient(135deg, rgba(255,0,60,0.08), rgba(5,11,20,0.9)); border-color: rgba(255,0,60,0.2);">
+    <h2>&#x1F6E1; Admin Control Center</h2>
+    <p>Full administrative access to AEGISAI. Manage users, monitor threats, and configure the system.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon cyan">&#x1F465;</div>
+        <div class="stat-value">{{ total_users }}</div>
+        <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon yellow">&#x1F46E;</div>
+        <div class="stat-value">{{ total_police }}</div>
+        <div class="stat-label">Police Officers</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon red">&#x26A0;</div>
+        <div class="stat-value">{{ active_threats }}</div>
+        <div class="stat-label">Malware Alerts</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">&#x1F4CB;</div>
+        <div class="stat-value">{{ total_reports }}</div>
+        <div class="stat-label">Crime Reports</div>
+    </div>
+</div>
+
+<div class="content-card">
+    <h3>&#x26A1; Quick Administration</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.25rem;">
+        <a href="{% url 'admin_users' %}" class="quick-action-btn">&#x1F465; Manage Users</a>
+        <a href="{% url 'admin_police' %}" class="quick-action-btn">&#x1F46E; Manage Police</a>
+        <a href="{% url 'admin_incidents' %}" class="quick-action-btn">&#x1F4CB; Crime Reports</a>
+        <a href="{% url 'admin_threats' %}" class="quick-action-btn">&#x1F6A8; Threat Logs</a>
+        <a href="{% url 'admin_feedback' %}" class="quick-action-btn">&#x1F4AC; User Feedback</a>
+    </div>
+</div>
+
+<div class="content-card" style="margin-top: 1rem;">
+    <h3>&#x1F4CA; Attack Monitoring &amp; Network Traffic</h3>
+    <div style="height: 300px; width: 100%; position: relative;">
+        <canvas id="attackChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('attackChart').getContext('2d');
+
+        Chart.defaults.color = '#cbd5e1';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        const gradientBlue = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientBlue.addColorStop(0, 'rgba(0, 71, 255, 0.5)');
+        gradientBlue.addColorStop(1, 'rgba(0, 71, 255, 0.0)');
+
+        const gradientCyan = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientCyan.addColorStop(0, 'rgba(0, 240, 255, 0.5)');
+        gradientCyan.addColorStop(1, 'rgba(0, 240, 255, 0.0)');
+
+        const gradientRed = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientRed.addColorStop(0, 'rgba(255, 0, 60, 0.5)');
+        gradientRed.addColorStop(1, 'rgba(255, 0, 60, 0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                datasets: [
+                    {
+                        label: 'Malware Payloads',
+                        data: [12, 19, 15, 25, 22, 30, 28],
+                        borderColor: '#0047ff',
+                        backgroundColor: gradientBlue,
+                        borderWidth: 2, tension: 0.4, fill: true,
+                        pointBackgroundColor: '#0047ff', pointBorderColor: '#fff'
+                    },
+                    {
+                        label: 'DDoS Traffic Peaks',
+                        data: [5, 8, 25, 10, 35, 15, 10],
+                        borderColor: '#ff003c',
+                        backgroundColor: gradientRed,
+                        borderWidth: 2, tension: 0.4, fill: true,
+                        pointBackgroundColor: '#ff003c', pointBorderColor: '#fff'
+                    },
+                    {
+                        label: 'Clean Packets',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        borderColor: '#00f0ff',
+                        backgroundColor: gradientCyan,
+                        borderWidth: 2, tension: 0.4, fill: true,
+                        pointBackgroundColor: '#00f0ff', pointBorderColor: '#fff'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { usePointStyle: true, padding: 20 } },
+                    tooltip: {
+                        backgroundColor: 'rgba(5,11,20,0.9)',
+                        titleColor: '#00f0ff', bodyColor: '#fff',
+                        borderColor: 'rgba(0,240,255,0.3)', borderWidth: 1, padding: 10
+                    }
+                },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                interaction: { mode: 'index', intersect: false }
+            }
+        });
+    });
+</script>
+{% endblock %}

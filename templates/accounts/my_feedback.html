@@ -1,0 +1,84 @@
+{% extends 'accounts/user_base.html' %}
+
+{% block page_title %}My Feedback{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>My Feedback</h1>
+    <p>Submit feedback and view your previous submissions</p>
+</div>
+
+<!-- Submit Feedback -->
+<div class="content-card">
+    <h3>Submit New Feedback</h3>
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" name="subject" required class="form-control" placeholder="Enter subject" style="pointer-events: auto;">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required class="form-control" style="pointer-events: auto;">
+                    <option value="bug">Bug Report</option>
+                    <option value="feature">Feature Request</option>
+                    <option value="general">General</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Message</label>
+            <textarea name="message" required class="form-control" rows="5" placeholder="Enter your message" style="pointer-events: auto;"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.75rem 2.5rem; pointer-events: auto;">Submit Feedback</button>
+    </form>
+</div>
+
+<!-- Feedback History -->
+<div class="content-card">
+    <h3>Feedback History ({{ feedbacks|length }})</h3>
+
+    {% if feedbacks %}
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fb in feedbacks %}
+                <tr>
+                    <td>
+                        <strong>{{ fb.name }}</strong>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">{{ fb.experience|truncatewords:15 }}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ fb.comments|lower|default:'general' }}">
+                            {{ fb.comments|title|default:'General' }}
+                        </span>
+                    </td>
+                    <td style="white-space: nowrap;">N/A</td>
+                    <td>
+                        <a href="{% url 'delete_feedback' fb.pk %}" class="btn-sm btn-sm-danger" onclick="return confirm('Delete this feedback?');" style="pointer-events: auto;">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#x1F4AC;</div>
+        <p>No feedback submitted yet. Use the form above to share your thoughts.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

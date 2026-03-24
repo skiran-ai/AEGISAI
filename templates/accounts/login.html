@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - AEGISAI{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div style="text-align:center;">
+            <span class="role-badge user-badge">User Login</span>
+        </div>
+        <h2>Welcome Back</h2>
+        <p class="auth-subtitle">Sign in to your AEGISAI account</p>
+
+        {% if form.non_field_errors %}
+        <div class="messages-container">
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <ul class="form-errors">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <ul class="form-errors">{% for e in form.password.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+            Don't have an account? <a href="{% url 'register' %}">Register</a><br>
+            <a href="{% url 'admin_login' %}" style="color: var(--text-muted); font-size: 0.8rem;">Admin Login</a>
+            &nbsp;|&nbsp;
+            <a href="{% url 'police_login' %}" style="color: var(--text-muted); font-size: 0.8rem;">Police Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

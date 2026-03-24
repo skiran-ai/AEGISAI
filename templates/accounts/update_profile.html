@@ -1,0 +1,115 @@
+{% extends 'accounts/user_base.html' %}
+
+{% block page_title %}Update Profile{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Update Profile</h1>
+    <p>Manage your personal information and security settings</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+    <!-- Profile Info Card -->
+    <div class="content-card">
+        <h3>Personal Information</h3>
+        <form method="post" action="{% url 'update_profile' %}" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="messages-container">
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label>First Name</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                <ul class="form-errors">{% for e in form.first_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Last Name</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                <ul class="form-errors">{% for e in form.last_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <ul class="form-errors">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    <!-- Change Password Card -->
+    <div class="content-card">
+        <h3>Change Password</h3>
+        <form method="post" action="{% url 'change_password' %}" novalidate>
+            {% csrf_token %}
+
+            {% if password_form.non_field_errors %}
+            <div class="messages-container">
+                {% for error in password_form.non_field_errors %}
+                <div class="alert alert-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label>Current Password</label>
+                {{ password_form.current_password }}
+                {% if password_form.current_password.errors %}
+                <ul class="form-errors">{% for e in password_form.current_password.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>New Password</label>
+                {{ password_form.new_password }}
+                {% if password_form.new_password.errors %}
+                <ul class="form-errors">{% for e in password_form.new_password.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                {{ password_form.confirm_password }}
+                {% if password_form.confirm_password.errors %}
+                <ul class="form-errors">{% for e in password_form.confirm_password.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Password</button>
+        </form>
+    </div>
+</div>
+
+<!-- Account Info -->
+<div class="content-card" style="margin-top: 1.5rem;">
+    <h3>Account Details</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">Full Name</span>
+            <span style="font-weight: 600;">{{ user.get_full_name }}</span>
+        </div>
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">Email</span>
+            <span style="font-weight: 600;">{{ user.email }}</span>
+        </div>
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">Member Since</span>
+            <span style="font-weight: 600;">{{ user.date_joined|date:"M d, Y" }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

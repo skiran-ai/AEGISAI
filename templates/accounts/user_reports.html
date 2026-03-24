@@ -1,0 +1,107 @@
+{% extends 'accounts/user_base.html' %}
+
+{% block page_title %}User Reports{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>User Reports</h1>
+    <p>Report cybercrime incidents and track their status</p>
+</div>
+
+<!-- Submit Report -->
+<div class="content-card">
+    <h3>File New Report</h3>
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="messages-container">
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Report Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <ul class="form-errors">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>Crime Type</label>
+                {{ form.crime_type }}
+                {% if form.crime_type.errors %}
+                <ul class="form-errors">{% for e in form.crime_type.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+            <ul class="form-errors">{% for e in form.description.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Evidence Details (optional)</label>
+            {{ form.evidence_details }}
+            {% if form.evidence_details.errors %}
+            <ul class="form-errors">{% for e in form.evidence_details.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.75rem 2.5rem;">Submit Report</button>
+    </form>
+</div>
+
+<!-- Report History -->
+<div class="content-card">
+    <h3>My Reports ({{ reports|length }})</h3>
+
+    {% if reports %}
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reports %}
+                <tr>
+                    <td>
+                        <strong>{{ r.title }}</strong>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">{{ r.description|truncatewords:12 }}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-info">{{ r.get_crime_type_display }}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ r.status|lower }}">{{ r.get_status_display }}</span>
+                    </td>
+                    <td style="white-space: nowrap;">{{ r.created_at|date:"M d, Y" }}<br><span style="color: var(--text-muted); font-size: 0.8rem;">{{ r.created_at|time:"h:i A" }}</span></td>
+                    <td>
+                        <a href="{% url 'report_detail' r.pk %}" class="btn-sm btn-sm-primary">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#x1F4CB;</div>
+        <p>No reports filed yet. Use the form above to report a cybercrime incident.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

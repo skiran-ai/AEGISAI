@@ -1,0 +1,78 @@
+{% extends 'accounts/user_base.html' %}
+
+{% block page_title %}File Inbox{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>&#x1F4E5; File Inbox</h1>
+    <p>Files shared with you. Only AI-verified clean files can be downloaded.</p>
+</div>
+
+<div class="content-card">
+    <h3>Received Files ({{ received_files|length }})</h3>
+
+    {% if received_files %}
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>From</th>
+                    <th>Message</th>
+                    <th>AI Scan Result</th>
+                    <th>Received</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in received_files %}
+                <tr>
+                    <td>
+                        <strong>{{ f.original_filename }}</strong>
+                    </td>
+                    <td>
+                        {{ f.sender.get_full_name }}<br>
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">{{ f.sender.email }}</span>
+                    </td>
+                    <td>
+                        {% if f.message %}
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">{{ f.message|truncatewords:12 }}</span>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">No message</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if f.scan_result == 'CLEAN' %}
+                        <span class="status-badge status-resolved">&#x2705; Safe</span>
+                        {% elif f.scan_result == 'MALICIOUS' %}
+                        <span class="status-badge status-dismissed">&#x26D4; Malicious</span>
+                        {% else %}
+                        <span class="status-badge status-pending">&#x23F3; Scanning...</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        {{ f.created_at|date:"M d, Y" }}<br>
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">{{ f.created_at|time:"h:i A" }}</span>
+                    </td>
+                    <td>
+                        {% if f.scan_result == 'CLEAN' %}
+                        <a href="{% url 'download_file' f.pk %}" class="btn-sm btn-sm-primary">&#x2B07; Download</a>
+                        {% elif f.scan_result == 'MALICIOUS' %}
+                        <span style="color: var(--accent-red); font-size: 0.8rem; font-weight: 600;">&#x1F6AB; Blocked</span>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">&#x1F4E5;</div>
+        <p>Your inbox is empty. Files shared with you will appear here.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

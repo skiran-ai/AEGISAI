@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% block page_title %}Dashboard{% endblock %} - AEGISAI{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">{% endblock %}
+
+{% block navbar %}
+<nav class="navbar">
+    <a href="{% url 'home' %}" class="navbar-brand">
+        <div class="shield-icon">&#x1F6E1;</div>
+        <span class="brand-text">AEGISAI</span>
+    </a>
+    <ul class="navbar-links">
+        <li>
+            <div class="user-info">
+                <div class="user-avatar">{{ user.first_name.0 }}{{ user.last_name.0 }}</div>
+                <div class="user-details">
+                    <div class="user-name">{{ user.get_full_name }}</div>
+                    <div class="user-role">User</div>
+                </div>
+            </div>
+        </li>
+        <li><a href="{% url 'logout' %}" class="btn-nav">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h3>User Panel</h3>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="{% url 'user_dashboard' %}" class="{% if active_page == 'home' %}active{% endif %}"><span class="nav-icon">&#x1F3E0;</span> Home</a></li>
+            <li><a href="{% url 'update_profile' %}" class="{% if active_page == 'profile' %}active{% endif %}"><span class="nav-icon">&#x1F464;</span> Update Profile</a></li>
+            <li><a href="{% url 'file_share' %}" class="{% if active_page == 'fileshare' %}active{% endif %}"><span class="nav-icon">&#x1F4E4;</span> FileShare</a></li>
+            <li><a href="{% url 'file_inbox' %}" class="{% if active_page == 'fileinbox' %}active{% endif %}"><span class="nav-icon">&#x1F4E5;</span> FileInbox</a></li>
+            <li><a href="{% url 'my_feedback' %}" class="{% if active_page == 'feedback' %}active{% endif %}"><span class="nav-icon">&#x1F4AC;</span> My Feedback</a></li>
+            <li><a href="{% url 'user_reports' %}" class="{% if active_page == 'reports' %}active{% endif %}"><span class="nav-icon">&#x1F4CB;</span> User Reports</a></li>
+            <li><a href="{% url 'logout' %}"><span class="nav-icon">&#x1F6AA;</span> Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="dashboard-main">
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block dashboard_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'accounts/admin_base.html' %}
+{% block page_title %}Feedback{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Platform Feedback</h1>
+    <p>View feedback and bug reports from users.</p>
+</div>
+<div class="content-card table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Category</th>
+                <th>User</th>
+                <th>Message</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feedback in feedbacks %}
+            <tr>
+                <td style="font-weight: 500;">{{ feedback.name }}</td>
+                <td>
+                    <span class="status-badge status-{{ feedback.comments|lower|default:'general' }}">{{ feedback.comments|title|default:'General' }}</span>
+                </td>
+                <td>{{ feedback.email }}</td>
+                <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ feedback.experience }}</td>
+                <td>{{ feedback.created_at|date:"M d, Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No feedback found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

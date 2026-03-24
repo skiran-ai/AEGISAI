@@ -1,0 +1,49 @@
+{% extends 'accounts/admin_base.html' %}
+{% block page_title %}Incident Detail{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Incident Detail</h1>
+    <a href="{% url 'admin_incidents' %}" class="btn btn-outline" style="margin-bottom: 1rem; width: auto;">&larr; Back to Incidents</a>
+</div>
+<div class="content-card">
+    <h3>{{ incident.title }}</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; margin-bottom: 2rem;">
+        <div><span style="color: var(--text-muted); font-size: 0.85rem;">User:</span> <p>{{ incident.user.get_full_name }} ({{ incident.user.email }})</p></div>
+        <div><span style="color: var(--text-muted); font-size: 0.85rem;">Crime Type:</span> <p>{{ incident.get_crime_type_display }}</p></div>
+        <div><span style="color: var(--text-muted); font-size: 0.85rem;">Status:</span> <p><span class="status-badge status-{{ incident.status|lower }}">{{ incident.get_status_display }}</span></p></div>
+        <div><span style="color: var(--text-muted); font-size: 0.85rem;">Reported On:</span> <p>{{ incident.created_at }}</p></div>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+        <span style="color: var(--text-muted); font-size: 0.85rem;">Description:</span>
+        <div style="background: var(--bg-input); padding: 1rem; border-radius: 8px; margin-top: 0.5rem; border: 1px solid var(--border-color);">
+            {{ incident.description|linebreaks }}
+        </div>
+    </div>
+    
+    {% if incident.evidence_details %}
+    <div>
+        <span style="color: var(--text-muted); font-size: 0.85rem;">Evidence Details:</span>
+        <div style="background: var(--bg-input); padding: 1rem; border-radius: 8px; margin-top: 0.5rem; border: 1px solid var(--border-color);">
+            {{ incident.evidence_details|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+        <h4>Assign Police Officer</h4>
+        <form method="POST" style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+            {% csrf_token %}
+            <select name="assigned_police" class="form-input" style="max-width: 300px;">
+                <option value="">-- Unassigned --</option>
+                {% for officer in police_officers %}
+                    <option value="{{ officer.pk }}" {% if incident.assigned_police and incident.assigned_police.pk == officer.pk %}selected{% endif %}>
+                        {{ officer.get_full_name }} ({{ officer.badge_number }})
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary" style="width: auto;">Update Assignment</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'accounts/police_base.html' %}
+
+{% block dashboard_content %}
+<div class="welcome-section" style="background: linear-gradient(135deg, rgba(255,184,0,0.08), rgba(5,11,20,0.9)); border-color: rgba(255,184,0,0.2);">
+    <h2>&#x1F46E; Welcome, Officer {{ user.first_name }}!</h2>
+    <p>Law enforcement portal for cybercrime investigation and case management. Badge: <strong>{{ user.badge_number }}</strong></p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon yellow">&#x1F4CB;</div>
+        <div class="stat-value">{{ assigned_count }}</div>
+        <div class="stat-label">Assigned Cases</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon cyan">&#x1F50D;</div>
+        <div class="stat-value">{{ active_investigations }}</div>
+        <div class="stat-label">Active Investigations</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">&#x2705;</div>
+        <div class="stat-value">{{ resolved_cases }}</div>
+        <div class="stat-label">Resolved Cases</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon red">&#x1F6A8;</div>
+        <div class="stat-value">{{ pending_reports }}</div>
+        <div class="stat-label">Pending Reports</div>
+    </div>
+</div>
+
+<div class="content-card">
+    <h3>&#x26A1; Quick Actions</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.25rem;">
+        <a href="{% url 'police_reports' %}" class="quick-action-btn">&#x1F4CB; View Reports</a>
+        <a href="{% url 'police_threats' %}" class="quick-action-btn">&#x1F6A8; Threat Logs</a>
+    </div>
+</div>
+
+<div class="content-card" style="margin-top: 1rem;">
+    <h3>&#x1F477; Officer Information</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Name</span>
+            <p style="margin-top: 0.25rem; font-weight: 600;">{{ user.get_full_name }}</p>
+        </div>
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Badge Number</span>
+            <p style="margin-top: 0.25rem; font-weight: 600; color: var(--accent-yellow);">{{ user.badge_number }}</p>
+        </div>
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Email</span>
+            <p style="margin-top: 0.25rem;">{{ user.email }}</p>
+        </div>
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Phone</span>
+            <p style="margin-top: 0.25rem;">{{ user.phone_number }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="content-card" style="margin-top: 1rem;">
+    <h3>&#x1F4CA; Incident Tracking Over Time</h3>
+    <div style="height: 300px; width: 100%; position: relative;">
+        <canvas id="incidentChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('incidentChart').getContext('2d');
+
+        Chart.defaults.color = '#cbd5e1';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        const gradientYellow = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientYellow.addColorStop(0, 'rgba(255, 184, 0, 0.5)');
+        gradientYellow.addColorStop(1, 'rgba(255, 184, 0, 0.0)');
+
+        const gradientRed = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientRed.addColorStop(0, 'rgba(255, 0, 60, 0.5)');
+        gradientRed.addColorStop(1, 'rgba(255, 0, 60, 0.0)');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    {
+                        label: 'Reported Incidents',
+                        data: [4, 6, 3, 8, 5, 2, 7],
+                        backgroundColor: gradientYellow,
+                        borderColor: '#ffb800',
+                        borderWidth: 1, borderRadius: 4
+                    },
+                    {
+                        label: 'Critical Threats',
+                        data: [1, 3, 0, 2, 1, 0, 2],
+                        backgroundColor: gradientRed,
+                        borderColor: '#ff003c',
+                        borderWidth: 1, borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { usePointStyle: true, padding: 20 } },
+                    tooltip: {
+                        backgroundColor: 'rgba(5,11,20,0.9)',
+                        titleColor: '#ffb800', bodyColor: '#fff',
+                        borderColor: 'rgba(255,184,0,0.3)', borderWidth: 1, padding: 10
+                    }
+                },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
